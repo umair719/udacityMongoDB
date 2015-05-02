@@ -24,10 +24,8 @@ def parse_file(datafile):
             else:
                 dataLine = {}
                 values = line.split(",")
-                x = 0
-                for k in keys:
-                    dataLine[k.rstrip()] = values[x].rstrip()
-                    x += 1
+                for x, key in enumerate(keys):
+                    dataLine[key.rstrip()] = values[x].rstrip()
                 data.append(dataLine)
     return data
 
