@@ -64,12 +64,13 @@ def main():
         if artist['sort-name'] == 'First Aid Kit':
             # print(artist['sort-name'])
             fak_count += 1
+        else:
             break
     print("Bands Named 'First Aid Kit' : " + str(fak_count))
 
     # BEGIN_AREA name for Queen?
     results = query_by_name(ARTIST_URL, query_type['simple'], "Queen")
-    print("BEGIN_AREA name for Queen? : " + results['artists'][0]['area']['name'])
+    print("BEGIN_AREA name for Queen? : " + results['artists'][0]['begin-area']['name'])
 
     # Spanish Alias for Beatles?
     results = query_by_name(ARTIST_URL, query_type['simple'], "Beatles")
