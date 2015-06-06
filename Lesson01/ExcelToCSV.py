@@ -32,13 +32,19 @@ def parse_file(datafile):
         region_header = sheet.cell_value(0,i)
         region_data = sheet.col_values(i, start_rowx=1, end_rowx=None)
         region_max = max(region_data)
-        print(region_header , region_max)
+        region_max_index = sheet.col_values(i).index(region_max)
+        region_max_date_xls = sheet.cell_value(region_max_index, 0)
+        region_max_date = xlrd.xldate_as_tuple(region_max_date_xls, 1)
+        
+        print region_header, region_max, region_max_index, region_max_date
+        
     return data
 
 
 def save_file(data, filename):
-    print(data)
-    print(filename)
+    # print(data)
+    # print(filename)
+    u = 1
 
 
 # YOUR CODE HERE
