@@ -24,35 +24,40 @@ def open_zip(datafile):
 def parse_file(datafile):
     workbook = xlrd.open_workbook(datafile)
     sheet = workbook.sheet_by_index(0)
-    data = None
+    data = []
+    fieldnames = ['Station',  'Max Load', 'Year', 'Month', 'Day', 'Hour' ]
     # YOUR CODE HERE
     # Remember that you can use xlrd.xldate_as_tuple(sometime, 0) to convert
     # Excel date to Python tuple of (year, month, day, hour, minute, second)
+    data.append(fieldnames)
     for i in range(1, 9):
         region_header = sheet.cell_value(0,i)
         region_data = sheet.col_values(i, start_rowx=1, end_rowx=None)
         region_max = max(region_data)
         region_max_index = sheet.col_values(i).index(region_max)
         region_max_date_xls = sheet.cell_value(region_max_index, 0)
-        region_max_date = xlrd.xldate_as_tuple(region_max_date_xls, 1)
-        
-        print region_header, region_max, region_max_index, region_max_date
-        
+        region_max_date = xlrd.xldate_as_tuple(region_max_date_xls,0)
+        data.append({'Station': region_header,
+                                    'Max Load': region_max,
+                                    'Year': region_max_date[0],
+                                    'Month': region_max_date[1],
+                                    'Day': region_max_date[2],
+                                    'Hour': region_max_date[3]})
     return data
 
 
 def save_file(data, filename):
-    # print(data)
-    # print(filename)
-    u = 1
-
-
-# YOUR CODE HERE
+    csvfile = open(filename,'wb')
+    fieldnames = data.pop(0)
+    wr = csv.DictWriter(csvfile, delimiter="|", fieldnames=fieldnames)
+    wr.writerow(dict((fn,fn) for fn in fieldnames))
+    for row in data:
+        wr.writerow(row)
 
 
 def test():
     open_zip(datafile)
-    data = parse_file(datafile)
+    data  = parse_file(datafile)
     save_file(data, outfile)
 
     number_of_rows = 0
@@ -67,30 +72,30 @@ def test():
                         'NORTH_C', 'SOUTHERN', 'SOUTH_C', 'WEST']
     fields = ['Year', 'Month', 'Day', 'Hour', 'Max Load']
 
-    # with open(outfile) as of:
-    #     csvfile = csv.DictReader(of, delimiter="|")
-    #     for line in csvfile:
-    #         station = line['Station']
-    #         if station == 'FAR_WEST':
-    #             for field in fields:
-    #                 # Check if 'Max Load' is within .1 of answer
-    #                 if field == 'Max Load':
-    #                     max_answer = round(float(ans[station][field]), 1)
-    #                     max_line = round(float(line[field]), 1)
-    #                     assert max_answer == max_line
-    #
-    #                 # Otherwise check for equality
-    #                 else:
-    #                     assert ans[station][field] == line[field]
-    #
-    #         number_of_rows += 1
-    #         stations.append(station)
-    #
-    #     # Output should be 8 lines not including header
-    #     assert number_of_rows == 8
-    #
-    #     # Check Station Names
-    #     assert set(stations) == set(correct_stations)
+    with open(outfile) as of:
+        csvfile = csv.DictReader(of, delimiter="|")
+        for line in csvfile:
+            station = line['Station']
+            if station == 'FAR_WEST':
+                for field in fields:
+                    # Check if 'Max Load' is within .1 of answer
+                    if field == 'Max Load':
+                        max_answer = round(float(ans[station][field]), 1)
+                        max_line = round(float(line[field]), 1)
+                        assert max_answer == max_line
+    
+                    # Otherwise check for equality
+                    else:
+                        assert ans[station][field] == line[field]
+    
+            number_of_rows += 1
+            stations.append(station)
+    
+        # Output should be 8 lines not including header
+        assert number_of_rows == 8
+    
+        # Check Station Names
+        assert set(stations) == set(correct_stations)
 
 
 if __name__ == "__main__":
