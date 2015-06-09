@@ -20,12 +20,14 @@ The rest of functions are provided for your convenience, if you want to access t
 """
 import json
 import codecs
+
 import requests
+
 
 URL_MAIN = "http://api.nytimes.com/svc/"
 URL_POPULAR = URL_MAIN + "mostpopular/v2/"
-API_KEY = { "popular": "",
-            "article": ""}
+API_KEY = {"popular": "",
+           "article": ""}
 
 
 def get_from_file(kind, period):
@@ -37,9 +39,14 @@ def get_from_file(kind, period):
 def article_overview(kind, period):
     data = get_from_file(kind, period)
     titles = []
-    urls =[]
-    # YOUR CODE HERE
-
+    urls = []
+    for d in data:
+        titles.append({d['section']: d['title']})
+        if "media" in d:
+            for m in d['media']:
+                for mm in m['media-metadata']:
+                    if mm['format'] == 'Standard Thumbnail':
+                        urls.append(mm['url'])
     return (titles, urls)
 
 
@@ -49,11 +56,11 @@ def query_site(url, target, offset):
     # NYTimes returns 20 articles per request, if you want the next 20
     # You have to provide the offset parameter
     if API_KEY["popular"] == "" or API_KEY["article"] == "":
-        print "You need to register for NYTimes Developer account to run this program."
-        print "See Intructor notes for information"
+        print("You need to register for NYTimes Developer account to run this program.")
+        print("See Intructor notes for information")
         return False
     params = {"api-key": API_KEY[target], "offset": offset}
-    r = requests.get(url, params = params)
+    r = requests.get(url, params=params)
 
     if r.status_code == requests.codes.ok:
         return r.json()
@@ -64,11 +71,11 @@ def query_site(url, target, offset):
 def get_popular(url, kind, days, section="all-sections", offset=0):
     # This function will construct the query according to the requirements of the site
     # and return the data, or print an error message if called incorrectly
-    if days not in [1,7,30]:
-        print "Time period can be 1,7, 30 days only"
+    if days not in [1, 7, 30]:
+        print("Time period can be 1,7, 30 days only")
         return False
     if kind not in ["viewed", "shared", "emailed"]:
-        print "kind can be only one of viewed/shared/emailed"
+        print("kind can be only one of viewed/shared/emailed")
         return False
 
     url = URL_POPULAR + "most{0}/{1}/{2}.json".format(kind, section, days)
@@ -84,10 +91,10 @@ def save_file(kind, period):
     num_results = data["num_results"]
     full_data = []
     with codecs.open("popular-{0}-{1}-full.json".format(kind, period), encoding='utf-8', mode='w') as v:
-        for offset in range(0, num_results, 20):        
+        for offset in range(0, num_results, 20):
             data = get_popular(URL_POPULAR, kind, period, offset=offset)
             full_data += data["results"]
-        
+
         v.write(json.dumps(full_data, indent=2))
 
 
