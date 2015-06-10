@@ -8,16 +8,18 @@ __author__ = 'Umair'
 # form field values for "__EVENTVALIDATION" and "__VIEWSTATE" and set the approprate
 # values in the data dictionary.
 # All your changes should be in the 'extract_data' function
+from bs4 import BeautifulSoup
 import requests
 
 html_page = "page_source.html"
 
 
 def extract_data(page):
-    data = {"eventvalidation": "",
-            "viewstate": ""}
     with open(page, "r") as html:
         # do something here to find the necessary values
+        soap = BeautifulSoup(html)
+        data = {"eventvalidation": soap.find(id="__EVENTVALIDATION")['value'],
+                "viewstate": soap.find(id="__VIEWSTATE")['value']}
         pass
 
     return data
