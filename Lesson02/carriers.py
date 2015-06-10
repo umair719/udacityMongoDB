@@ -26,7 +26,6 @@ def extract_carriers(page):
         # do something here to find the necessary values
         soup = BeautifulSoup(html)
         for option in soup.find(id='CarrierList').find_all('option'):
-            # print(option.get('value'))
             if re.match('^All', option.get('value')) is None:
                 data.append(option.get('value'))
     return data
