@@ -11,7 +11,10 @@ __author__ = 'Umair'
 # values, like "All U.S. Carriers" from the data that you return.
 # You should return a list of codes for the carriers.
 
+import re
+
 from bs4 import BeautifulSoup
+
 
 html_page = "options.html"
 
@@ -22,7 +25,10 @@ def extract_carriers(page):
     with open(page, "r") as html:
         # do something here to find the necessary values
         soup = BeautifulSoup(html)
-
+        for option in soup.find(id='CarrierList').find_all('option'):
+            # print(option.get('value'))
+            if re.match('^All', option.get('value')) is None:
+                data.append(option.get('value'))
     return data
 
 
