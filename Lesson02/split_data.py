@@ -7,10 +7,9 @@ __author__ = 'Umair'
 # It is, a matter of fact, a collection of a lot of concatenated XML documents.
 # So, one solution would be to split the file into separate documents,
 # so that you can process the resulting files as valid XML documents.
-
 import xml.etree.ElementTree as ET
 
-PATENTS = 'patent.data'
+PATENTS = 'patent.data.xml'
 
 
 def get_root(fname):
@@ -24,7 +23,26 @@ def split_file(filename):
     # As a hint - each patent declaration starts with the same line that was causing the error
     # The new files should be saved with filename in the following format:
     # "{}-{}".format(filename, n) where n is a counter, starting from 0.
+    # get_root(filename)
 
+    txt = open(filename)
+    content = txt.read()
+    start = 1
+    found = 0
+    data = []
+    stop = content.rfind('<?xml version="1.0" encoding="UTF-8"?>')
+    first = True
+    while found < len(content) and found != -1:
+        if first:
+            xml = content[0:content.find('<?xml version="1.0" encoding="UTF-8"?>', start)]
+            found = content.find('<?xml version="1.0" encoding="UTF-8"?>', start)
+            first = False
+        else:
+            xml = content[found: content.find('<?xml version="1.0" encoding="UTF-8"?>', start)]
+            found = content.find('<?xml version="1.0" encoding="UTF-8"?>', start)
+        data.append(xml)
+        start = found + 1
+    print(len(data))
     pass
 
 
