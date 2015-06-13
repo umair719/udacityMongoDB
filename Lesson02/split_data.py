@@ -27,22 +27,15 @@ def split_file(filename):
 
     txt = open(filename)
     content = txt.read()
-    start = 1
-    found = 0
-    data = []
-    stop = content.rfind('<?xml version="1.0" encoding="UTF-8"?>')
-    first = True
-    while found < len(content) and found != -1:
-        if first:
-            xml = content[0:content.find('<?xml version="1.0" encoding="UTF-8"?>', start)]
-            found = content.find('<?xml version="1.0" encoding="UTF-8"?>', start)
-            first = False
-        else:
-            xml = content[found: content.find('<?xml version="1.0" encoding="UTF-8"?>', start)]
-            found = content.find('<?xml version="1.0" encoding="UTF-8"?>', start)
-        data.append(xml)
-        start = found + 1
-    print(len(data))
+    count = start = found = 0
+    while found != -1:
+        found = content.find('<?xml', found + 1)
+        xml = content[start:found - 1]
+        start = found
+        file = filename + "-" + str(count)
+        f = open(file, "w+")
+        f.write(xml)
+        count = int(count) + 1
     pass
 
 
