@@ -55,7 +55,7 @@ def main():
 
     # print("\nALL TITLES:")
     # for t in release_titles:
-    #     print(t)
+    # print(t)
 
     # How many bands Named "First Aid Kit"?
     results = query_by_name(ARTIST_URL, query_type["simple"], "First Aid Kit");
