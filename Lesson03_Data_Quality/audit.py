@@ -26,7 +26,7 @@ All the data initially is a string, so you have to do some checks on the values 
 
 """
 import csv
-import re
+import pprint
 
 CITIES = 'cities.csv'
 
@@ -38,15 +38,15 @@ FIELDS = ["name", "timeZone_label", "utcOffset", "homepage", "governmentType_lab
 
 def getType(value):
     if value == "NULL" or value == '':
-        return "NoneType"
+        return type(None)
     elif value.isdigit():
-        return "int"
+        return type(1)
     elif isFloat(value):
-        return "float"
+        return type(1.1)
     elif value[0] == "{":
-        return "list"
+        return type([])
     else:
-        return "str"
+        return type('str')
 
 
 def isFloat(value):
@@ -65,20 +65,28 @@ def audit_file(filename, fields):
         for row in citiesreader:
             if first:
                 first = False
-                FIELDS = row
-            else:
                 for col in row:
-                    type = getType(col)
-                    count = + 1
+                    FIELDS.append(col)
+                    fieldtypes[col] = []
+            else:
+                count = 0
+                for col in row:
+                    ftype = getType(col)
+                    if FIELDS[count] == 'areaTotal':
+                        print(FIELDS[count], "\t value:\t", col, ":\t ", ftype)
+                    if ftype not in fieldtypes[FIELDS[count]]:
+                        fieldtypes[FIELDS[count]].append(ftype)
+                    count = count + 1
     return fieldtypes
 
 
 def test():
     fieldtypes = audit_file(CITIES, FIELDS)
 
-    # pprint.pprint(fieldtypes)
+    pprint.pprint(fieldtypes['areaTotal'])
+    # pprint.pprint(fieldtypes['areaMetro'])
 
-    # assert fieldtypes["areaLand"] == set([type(1.1), type([]), type(None)])
+    # assert fieldtypes["areaLand"] == set([type("string"),type(1.1), type([]), type(None)])
     # assert fieldtypes['areaMetro'] == set([type(1.1), type(None)])
 
 
